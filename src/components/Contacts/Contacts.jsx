@@ -1,29 +1,38 @@
-import Notiflix from 'notiflix';
-import 'notiflix';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeContact } from 'redux/contactsSlice';
-import { List, Message } from './Contacts.styled';
-import { getContacts, getFilter } from 'redux/selector';
+
+import { List, Message, Notification } from './Contacts.styled';
+import { selectContacts, selectFilter } from 'redux/selector';
 import { ContactItem } from 'components/ContactItem/ContactItem';
-import { notiflix } from 'components/FormContact/FormContact';
+import { selectError, selectIsLoading } from 'redux/selector';
+import { fetchAll } from 'redux/operations';
+import { useEffect } from 'react';
 
 export function Contacts() {
-  const contacts = useSelector(getContacts);
-  const filter = useSelector(getFilter);
+  const contacts = useSelector(selectContacts);
+  const filter = useSelector(selectFilter);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(fetchAll());
+  }, [dispatch]);
+
   const visibleContacts = () => {
-    return contacts.filter(contact =>
+    console.log(contacts);
+    return contacts?.filter(contact =>
       contact.name.toLowerCase().includes((filter || '').toLowerCase())
     );
-  };
-  const deleteContact = (id, name) => {
-    dispatch(removeContact(id));
-    Notiflix.Notify.info(`Contact ${name} deleted`, notiflix);
   };
 
   return (
     <>
+      {isLoading && !error && <Notification>Loading...</Notification>}
+      {error && !isLoading && (
+        <Notification>
+          Sorry, there was ah error. Try again later...
+        </Notification>
+      )}
       {visibleContacts().length === 0 && contacts.length === 0 && (
         <Message>No contacts available.</Message>
       )}
@@ -34,13 +43,7 @@ export function Contacts() {
       {visibleContacts().length !== 0 && (
         <List>
           {visibleContacts().map(contact => {
-            return (
-              <ContactItem
-                key={contact.id}
-                contact={contact}
-                deleteContact={deleteContact}
-              />
-            );
+            return <ContactItem key={contact.id} contact={contact} />;
           })}
         </List>
       )}

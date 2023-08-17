@@ -10,6 +10,7 @@ export function App() {
       <FormContact />
       <Title>Contacts</Title>
       <Filter />
+
       <Contacts />
     </div>
   );

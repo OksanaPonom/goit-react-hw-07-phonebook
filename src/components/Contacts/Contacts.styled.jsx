@@ -17,3 +17,10 @@ export const Message = styled.p`
   font-weight: 500;
   text-align: center;
 `;
+export const Notification = styled.div`
+  width: 300px;
+  margin: 30px auto;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+`;

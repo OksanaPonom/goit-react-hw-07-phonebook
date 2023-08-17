@@ -1,7 +1,7 @@
 import { Formik } from 'formik';
 import Notiflix from 'notiflix';
 import 'notiflix';
-import { nanoid } from 'nanoid';
+
 import * as Yup from 'yup';
 import {
   Container,
@@ -12,8 +12,8 @@ import {
   FormCont,
 } from './FormContact.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts } from 'redux/selector';
-import { addContact } from 'redux/contactsSlice';
+import { selectContacts } from 'redux/selector';
+import { addContact } from 'redux/operations';
 
 export const notiflix = {
   position: 'center-top',
@@ -30,7 +30,7 @@ const validationSchema = Yup.object().shape({
       excludeEmptyString: true,
     })
     .required('Name is required'),
-  number: Yup.string()
+  phone: Yup.string()
     .matches(
       /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/,
       {
@@ -43,27 +43,27 @@ const validationSchema = Yup.object().shape({
 });
 
 export const FormContact = () => {
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
 
   const initialValues = {
     name: '',
-    number: '',
+    phone: '',
   };
 
   const handleSubmit = (values, { resetForm }) => {
-    const { name, number } = values;
+    const { name, phone } = values;
     const isAlreadyInContacts = contacts.some(
       contact =>
         contact.name.toLowerCase().trim() === name.toLowerCase().trim() ||
-        contact.number === number
+        contact.phone === phone
     );
     if (isAlreadyInContacts) {
       Notiflix.Notify.info(`${name} is already in contacts`, notiflix);
 
       return;
     }
-    dispatch(addContact({ name, number, id: nanoid() }));
+    dispatch(addContact({ name, phone }));
     Notiflix.Notify.info(`Contact ${name} added`, notiflix);
 
     resetForm();
@@ -85,12 +85,8 @@ export const FormContact = () => {
             </Label>
             <Label>
               Phone number
-              <Input
-                type="tel"
-                name="number"
-                placeholder="Enter phone number"
-              />
-              <Error name="number" component="div" className="error" />
+              <Input type="tel" name="phone" placeholder="Enter phone number" />
+              <Error name="phone" component="div" className="error" />
             </Label>
             <BtnAdd type="submit" disabled={!isValid || !dirty}>
               Add contact

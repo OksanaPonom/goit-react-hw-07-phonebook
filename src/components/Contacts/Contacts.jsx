@@ -19,7 +19,6 @@ export function Contacts() {
   }, [dispatch]);
 
   const visibleContacts = () => {
-    console.log(contacts);
     return contacts?.filter(contact =>
       contact.name.toLowerCase().includes((filter || '').toLowerCase())
     );
@@ -30,12 +29,12 @@ export function Contacts() {
       {isLoading && !error && <Notification>Loading...</Notification>}
       {error && !isLoading && (
         <Notification>
-          Sorry, there was ah error. Try again later...
+          Sorry, there was an error. Try again later...
         </Notification>
       )}
-      {visibleContacts().length === 0 && contacts.length === 0 && (
-        <Message>No contacts available.</Message>
-      )}
+      {visibleContacts().length === 0 &&
+        contacts.length === 0 &&
+        !isLoading && <Message>No contacts available.</Message>}
       {visibleContacts().length === 0 && contacts.length !== 0 && (
         <Message>Contact not found</Message>
       )}

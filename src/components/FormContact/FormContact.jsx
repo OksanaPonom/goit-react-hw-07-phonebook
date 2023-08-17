@@ -51,7 +51,7 @@ export const FormContact = () => {
     phone: '',
   };
 
-  const handleSubmit = (values, { resetForm }) => {
+  const handleSubmit = async (values, { resetForm }) => {
     const { name, phone } = values;
     const isAlreadyInContacts = contacts.some(
       contact =>
@@ -64,8 +64,6 @@ export const FormContact = () => {
       return;
     }
     dispatch(addContact({ name, phone }));
-    Notiflix.Notify.info(`Contact ${name} added`, notiflix);
-
     resetForm();
   };
 
